@@ -30,6 +30,7 @@ public class Square {
 
     private final String vertexShaderCode =
             "attribute vec4 vPosition;" +
+                    "uniform mat4 uMVPMatrix;" +
                     "void main() {" +
                     "  gl_Position = vPosition;" +
                     "}";
@@ -77,12 +78,13 @@ public class Square {
 
     private int mPositionHandle;
     private int mColorHandle;
+    private int mMVPMatrixHandle;
 
     private final int vertexCount = squareCoords.length / COORDS_PER_VERTEX;
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
 
 
-    public void drawSquare(){
+    public void drawSquare(float[] mvpMatrix){
         // 将program加入OpenGL ES环境中
         GLES20.glUseProgram(mProgram);
 
@@ -102,6 +104,15 @@ public class Square {
 
         // 设置三角形的颜色
         GLES20.glUniform4fv(mColorHandle, 1, color, 0);
+
+
+        // get handle to shape's transformation matrix
+        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
+        MyOpenGLUtils.checkGlError("glGetUniformLocation");
+
+        // Apply the projection and view transformation
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
+        MyOpenGLUtils.checkGlError("glUniformMatrix4fv");
 
         // 画正方形
         GLES20.glDrawElements(GLES20.GL_TRIANGLES,drawOrder.length,GLES20.GL_UNSIGNED_SHORT, drawListBuffer);

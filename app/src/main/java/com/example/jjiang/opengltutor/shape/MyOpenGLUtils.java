@@ -1,6 +1,7 @@
 package com.example.jjiang.opengltutor.shape;
 
 import android.opengl.GLES20;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -13,7 +14,7 @@ import java.nio.FloatBuffer;
 public class MyOpenGLUtils {
 
 
-
+    private static final String TAG = "OpenGL Error";
 
 
     public static int loadShader(int type, String shaderCode){
@@ -47,5 +48,27 @@ public class MyOpenGLUtils {
 
         return buffer;
     }
+
+
+    /**
+     * Utility method for debugging OpenGL calls. Provide the name of the call
+     * just after making it:
+     *
+     * <pre>
+     * mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
+     * MyGLRenderer.checkGlError("glGetUniformLocation");</pre>
+     *
+     * If the operation is not successful, the check throws an error.
+     *
+     * @param glOperation - Name of the OpenGL call to check.
+     */
+    public static void checkGlError(String glOperation) {
+        int error;
+        while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
+            Log.e(TAG, glOperation + ": glError " + error);
+            throw new RuntimeException(glOperation + ": glError " + error);
+        }
+    }
+
 
 }
