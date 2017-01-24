@@ -5,22 +5,19 @@ import android.content.pm.ConfigurationInfo;
 import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private boolean supportsEs2;
-    private GLSurfaceView glSurfaceView;
+    private MyGLSurfaceView glSurfaceView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-            glSurfaceView = new GLSurfaceView(this);
-            glSurfaceView.setEGLContextClientVersion(2);  // Pick an OpenGL ES 2.0 context.
-            glSurfaceView.setRenderer(new GLRenderer());
-            glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+            glSurfaceView = new MyGLSurfaceView(this);
             setContentView(glSurfaceView);
 
     }
@@ -42,4 +39,7 @@ public class MainActivity extends AppCompatActivity {
             glSurfaceView.onResume();
         }
     }
+
+
+
 }
