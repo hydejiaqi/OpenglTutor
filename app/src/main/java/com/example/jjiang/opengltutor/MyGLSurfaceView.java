@@ -20,7 +20,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     public MyGLSurfaceView(Context context) {
         super(context);
 
-        mRenderer = new GLRenderer();
+        mRenderer = new GLRenderer(context);
         setEGLContextClientVersion(2);  // Pick an OpenGL ES 2.0 context.
         setRenderer(mRenderer);
         //      glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -31,7 +31,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     public MyGLSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        mRenderer = new GLRenderer();
+        mRenderer = new GLRenderer(context);
         setEGLContextClientVersion(2);  // Pick an OpenGL ES 2.0 context.
         setRenderer(mRenderer);
         //      glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -40,7 +40,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     }
 
 
-    @Override
+   /* @Override
     public boolean onTouchEvent(MotionEvent e){
 
         // MotionEvent reports input details from the touch screen
@@ -78,5 +78,5 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
 
         return true;
-    }
+    }*/
 }

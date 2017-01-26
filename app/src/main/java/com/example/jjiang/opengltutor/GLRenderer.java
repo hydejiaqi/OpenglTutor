@@ -1,5 +1,9 @@
 package com.example.jjiang.opengltutor;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -16,6 +20,8 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import common.TextureHelper;
+
 /**
  * Created by jjiang on 1/20/2017.
  */
@@ -25,9 +31,11 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     private Triangle triangle;
     private Square square;
     public volatile float mAngle;
+    private Context context;
 
-    public GLRenderer(){
 
+    public GLRenderer(Context context){
+    this.context = context;
 
     }
 
@@ -37,7 +45,14 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         GLES20.glClearColor(0f, 0.2f, 0.2f, 1.0f); //设置清屏颜色
 
         triangle = new Triangle();
-        square = new Square();
+        square = new Square(context);
+
+
+
+
+        GLES20.glEnable(GLES20.GL_TEXTURE_2D);
+        // Active the texture unit 0
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
 
 
 
@@ -49,6 +64,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     private final float[] mViewMatrix = new float[16];
     private float[] mRotationMatrix = new float[16];
 
+
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
 
@@ -57,9 +73,13 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
         float ratio = (float) width / height;
 
+
+
+
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
-       Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+     Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+
 
 
 
@@ -75,8 +95,8 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
 
         // Create a rotation transformation for the triangle
-       /* long time = SystemClock.uptimeMillis() % 4000L;
-        float angle = 0.090f * ((int) time);*/
+        long time = SystemClock.uptimeMillis() % 4000L;
+        float angle = 0.090f * ((int) time);
         Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 0, -1.0f);
 
 
@@ -87,16 +107,20 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
+       square.drawSquare(mMVPMatrix);
 
         // Combine the rotation matrix with the projection and camera view
         // Note that the mMVPMatrix factor *must be first* in order
         // for the matrix multiplication product to be correct.
-        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
+      //  Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
+
 
         // Draw shape
-        triangle.drawTriangle(scratch);
-        //triangle.drawTriangle(mMVPMatrix);
+   //     triangle.drawTriangle(mMVPMatrix);
        // square.drawSquare();
+
+
+
 
 
 
