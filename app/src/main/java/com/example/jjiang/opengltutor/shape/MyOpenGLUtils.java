@@ -111,4 +111,32 @@ public class MyOpenGLUtils {
         return textureHandle[0];
     }
 
+
+    public static int linkGL(){
+        int programId = GLES20.glCreateProgram();//创建一个程序
+        if (programId == 0) {
+            Log.e("OPENGL", "Error Create Link Program");
+            return 0;
+        }
+        return programId;
+    }
+
+    public static int linkAttach(int vertexsharder,int fragmentsharder){
+        int programId = linkGL();
+        GLES20.glAttachShader(programId, vertexsharder); //和着色器进行关联
+        GLES20.glAttachShader(programId, fragmentsharder);//和着色器进行关联
+        GLES20.glLinkProgram(programId); //把program链接起来
+        int status[] = new int[1];
+        GLES20.glGetProgramiv(programId, GLES20.GL_LINK_STATUS, status, 0); //这地方一样是检查是否有错误发生。
+        Log.d("OPENGL","linkAttach link status is " + GLES20.glGetProgramInfoLog(programId));
+        if (status[0] == 0) {
+            Log.e("OPENGL","link status is error.");
+            GLES20.glDeleteProgram(programId);
+            return 0;
+        }
+        return programId;
+    }
+
+
+
 }

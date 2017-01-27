@@ -22,15 +22,6 @@ public class Square {
     private ShortBuffer drawListBuffer;
 
 
-    /** This will be used to pass in the texture. */
-    private int mTextureUniformHandle;
-
-    /** This will be used to pass in model texture coordinate information. */
-    private int mTextureCoordinateHandle;
-
-    /** Size of the texture coordinate data in elements. */
-    private final int mTextureCoordinateDataSize = 2;
-
 
 
     // number of coordinates per vertex in this array
@@ -93,7 +84,7 @@ public class Square {
 
     private final String fragmentShaderCode =
             "precision mediump float;" +
-                    "uniform sampler2D vTexture;" +
+                    "uniform sampler2D vTexture;" +  // u_Texture
                     "varying vec2 aCoordinate;" +
                     "void main() {" +
                     "  gl_FragColor = texture2D(vTexture,aCoordinate);" +
@@ -144,9 +135,33 @@ public class Square {
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
 
 
+
+    /** This will be used to pass in the texture. */
+    private int mTextureUniformHandle;
+
+    /** This will be used to pass in model texture coordinate information. */
+    private int mTextureCoordinateHandle;
+
+    /** Size of the texture coordinate data in elements. */
+    private final int mTextureCoordinateDataSize = 2;
+
     public void drawSquare(float[] mvpMatrix){
 
 
+        texture = MyOpenGLUtils.loadTexture(context, R.drawable.bumpy_bricks_public_domain);
+
+        mTextureUniformHandle = GLES20.glGetUniformLocation(mProgram, "vTexture");
+        mTextureCoordinateHandle = GLES20.glGetAttribLocation(mProgram, "vCoordinate");
+
+
+        // Set the active texture unit to texture unit 0.
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+
+        // Bind the texture to this unit.
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture);
+
+        // Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
+        GLES20.glUniform1i(mTextureUniformHandle, 0);
 
 
 
@@ -170,21 +185,15 @@ public class Square {
         // 设置三角形的颜色
         GLES20.glUniform4fv(mColorHandle, 1, color, 0);
 
-        texture = MyOpenGLUtils.loadTexture(context, R.drawable.bumpy_bricks_public_domain);
 
-
-        if(texture != -1 && texturebuffer != null){
-            GLES20.glEnable(GLES20.GL_TEXTURE_2D);
-            ;
-        }
 
         // get handle to shape's transformation matrix
         mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
-        MyOpenGLUtils.checkGlError("glGetUniformLocation");
+    //    MyOpenGLUtils.checkGlError("glGetUniformLocation");
 
         // Apply the projection and view transformation
         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
-        MyOpenGLUtils.checkGlError("glUniformMatrix4fv");
+     //   MyOpenGLUtils.checkGlError("glUniformMatrix4fv");
 
         // 画正方形
         GLES20.glDrawElements(GLES20.GL_TRIANGLES,drawOrder.length,GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
